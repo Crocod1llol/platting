@@ -8,21 +8,12 @@
 // not sure if ill use threads, but if it is, then i will
 // #include <thread>
 
-/*
-typedef struct Camera2D {
-    Vector2 offset;         // Camera offset (screen space offset from window origin)
-    Vector2 target;         // Camera target (world space target point that is mapped to screen space offset)
-    float rotation;         // Camera rotation in degrees (pivots around target)
-    float zoom;             // Camera zoom (scaling around target), must not be set to 0, set to 1.0f for no scale
-} Camera2D;
-*/
-
 extern "C" {
     #include "lib/raylib.h"
 }
 
-const int Width = 800;
-const int Height = 650;
+const int Width = GetScreenWidth();
+const int Height = GetScreenHeight();
 
 // a struct for a default part, the start of all
 typedef struct Part {
@@ -41,11 +32,13 @@ typedef struct Part {
 int main(void) {
     // initialization, making the screen maximized by playing around with flags
     InitWindow(Width, Height, "angry birds chinese");
+    /*
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     SetWindowState(FLAG_WINDOW_MAXIMIZED);
 
     ClearWindowState(FLAG_WINDOW_RESIZABLE);
+    */
 
     // no exit key
     SetExitKey(KEY_NULL);
@@ -64,7 +57,7 @@ int main(void) {
 
     // pos
     // values are temp
-    Vector2 guyPos = {/* x pos */(float)GetScreenWidth() / 2, /* y pos */(float)GetScreenHeight() / 2};
+    Vector2 guyPos = {/* x pos */(float)GetRenderWidth() / 2, /* y pos */(float)GetRenderHeight() / 2};
     
     // velocity
     float guyXvel = 0;
@@ -85,30 +78,43 @@ int main(void) {
 
     const int jumpVel = -490;
 
-    // random shit
+    // random 
     Part long_thing = {245, 417, 200, 400, LoadTexture("resources/map_part/long_200x400.png")};
 
     //camera declaration
     Camera2D platcam = {
-        {(float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2}, //offset
+        {(float)GetRenderWidth() / 2, (float)GetRenderHeight() / 2}, //offset
         guyPos, //target pos (the player)
         0.0, //rotation
         1.0, //zoom
     };
 
     while (!WindowShouldClose()) {
-
-        //update camera to follow player
+        
+        //update camera if player is alive
         if (alive) {
-            platcam.target = Vector2{guyPos.x + 20, guyPos.y + 20};
-        }
 
-        if (IsKeyDown(KEY_O)) {
-            platcam.offset.x += 2;
-        }
+            //x axis
+            if (guyPos.x >= GetRenderWidth() / 2 - 100 + platcam.target.x ) {
+                //to the right
+                platcam.target.x = guyPos.x;
+            }
 
-        if (IsKeyDown(KEY_P)) {
-            platcam.offset.y += 2;
+            if (guyPos.x <=  platcam.target.x - GetRenderWidth() / 2 + 100 ) {
+                //to the left
+                platcam.target.x = guyPos.x;
+            }
+
+            //y axis
+            if (guyPos.y > platcam.target.y) {
+                //down
+                platcam.target.y = guyPos.y;
+            }
+
+            if (guyPos.y < platcam.target.y) {
+                //up
+                platcam.target.y = guyPos.y;
+            }
         }
 
         // player stufffffffffffffffffffff
@@ -137,6 +143,7 @@ int main(void) {
             guyYvel = jumpVel;
         }
 
+
         if (CheckCollisionRecs(guyHitbox, long_thing.hitbox)) {
 
             // we should set the player on ground and also prevent them from going
@@ -154,6 +161,7 @@ int main(void) {
                 float playerCenterX = guyPos.x + guySizeX / 2;
                 float partCenterX = long_thing.x + long_thing.sizeX / 2;
 
+                
                 if (playerCenterX < partCenterX) {
 
                     // left side
@@ -166,19 +174,20 @@ int main(void) {
             }
         }
 
+
         // check if player is on ground
         //  to stop velocity
         if (onGround) {
 
             guyYvel = 0;
         } else {
-            // if not, then make gravity work idk
+              // if not, then make gravity work idk
 
               guyYvel = guyYvel + gravity;
         }
 
         // if player is out of borders in y, then kill em (sus)
-        if (guyPos.y > GetScreenHeight()) {
+        if (guyPos.y > GetRenderHeight()) {
 
             alive = false;
         }
@@ -190,6 +199,8 @@ int main(void) {
 
             guyPos.x = 1000;
             guyPos.y = 500;
+
+            platcam.target = guyPos;
 
             onGround = true;
         }
@@ -213,15 +224,18 @@ int main(void) {
               DrawText(TextFormat("Y: %f", guyPos.y), 0, 18, 16, WHITE);
               DrawText(TextFormat("alive: %d", alive), 0, 36, 16, WHITE);
 
-              DrawText(TextFormat("platcam.offset.x: %f", platcam.offset.x), 0, 54, 16, WHITE);
-              DrawText(TextFormat("platcam.offset.y: %f", platcam.offset.y), 0, 72, 16, WHITE);
+              DrawText(TextFormat("platcam.target.x: %f", platcam.target.x), 0, 54, 16, WHITE);
+              DrawText(TextFormat("platcam.target.y: %f", platcam.target.y), 0, 72, 16, WHITE);
+        }
+
+        if (!alive) {
+            DrawText("Press T to respawn!", GetRenderWidth(), GetRenderHeight(), 30, WHITE);
         }
 
         BeginMode2D(platcam);
         //note 2 self
         //THE CAMERA PART WOOOOO
-        //any map part, character, signs or any stuff part of the level or smth
-        //is going here
+        //any map part, character, signs or any stuff part of the level or smth is going here
         //KEEP THAT IN MIND!!!!!!!!!!!!!!!1
         
 
