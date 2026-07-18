@@ -12,8 +12,8 @@ extern "C" {
     #include "lib/raylib.h"
 }
 
-const int Width = GetScreenWidth();
-const int Height = GetScreenHeight();
+//own includes here
+//prob for levels and map
 
 // a struct for a default part, the start of all
 typedef struct Part {
@@ -29,16 +29,10 @@ typedef struct Part {
 
 } Part;
 
+
 int main(void) {
     // initialization, making the screen maximized by playing around with flags
-    InitWindow(Width, Height, "angry birds chinese");
-    /*
-    SetWindowState(FLAG_WINDOW_RESIZABLE);
-
-    SetWindowState(FLAG_WINDOW_MAXIMIZED);
-
-    ClearWindowState(FLAG_WINDOW_RESIZABLE);
-    */
+    InitWindow(GetScreenWidth(), GetScreenHeight(), "angry birds chinese");
 
     // no exit key
     SetExitKey(KEY_NULL);
@@ -48,12 +42,12 @@ int main(void) {
     // max fps
     SetTargetFPS(60);
 
-    // PLAYER STUFF!!!!!!!!!!!!!!!!!!11
+    // player variables
+    //idk why but when i move them into the global scope the whole program freaks out i dont
+    //know why broooo why does this happen
 
     // temp texture (or not who knows)
     Texture guyTex = LoadTexture("resources/player.png");
-
-    // player variables
 
     // pos
     // values are temp
