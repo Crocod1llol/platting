@@ -13,22 +13,23 @@ extern "C" {
 }
 
 //own includes here
-//prob for levels and map
+//temp
+#include "src/headers/generallvl.hpp"
+//temp
 
-// a struct for a default part, the start of all
-typedef struct Part {
-  float x;
-  float y;
+#include "src/headers/firstlevel.hpp"
 
-  float sizeX;
-  float sizeY;
+//the variables that can be global
+//idk how to do this tbh
+//im lost
+bool alive;
 
-  Texture tex;
+Vector2 guyPos;
 
-  Rectangle hitbox = {x, y, sizeX, sizeY};
+float guySizeX;
+float guySizeY;
 
-} Part;
-
+bool onGround;
 
 int main(void) {
     // initialization, making the screen maximized by playing around with flags
@@ -51,22 +52,22 @@ int main(void) {
 
     // pos
     // values are temp
-    Vector2 guyPos = {/* x pos */(float)GetRenderWidth() / 2, /* y pos */(float)GetRenderHeight() / 2};
+    guyPos = {/* x pos */(float)GetRenderWidth() / 2, /* y pos */(float)GetRenderHeight() / 2};
     
     // velocity
     float guyXvel = 0;
     float guyYvel = 0;
 
     // size
-    float guySizeX = 50;
-    float guySizeY = 85;
+    guySizeX = 50;
+    guySizeY = 85;
 
     // other stuff
+    alive = true;
+
+    onGround = true;
+
     int plySpeed = 250;
-
-    bool onGround = true;
-
-    bool alive = true;
 
     const int gravity = 10;
 
@@ -82,6 +83,9 @@ int main(void) {
         0.0, //rotation
         1.0, //zoom
     };
+
+    //init levels (test)
+    InitFirstLvl();
 
     while (!WindowShouldClose()) {
         
@@ -238,6 +242,9 @@ int main(void) {
         }
 
         DrawTexture(long_thing.tex, long_thing.x, long_thing.y, WHITE);
+
+        //test
+        DrawTexture(test_ok.tex, test_ok.x, test_ok.y, WHITE);
 
         EndMode2D();
 
