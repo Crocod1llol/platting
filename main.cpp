@@ -13,6 +13,7 @@ extern "C" {
 }
 
 //own includes here
+
 //temp
 #include "src/headers/generallvl.hpp"
 //temp
@@ -243,8 +244,12 @@ int main(void) {
 
         DrawTexture(long_thing.tex, long_thing.x, long_thing.y, WHITE);
 
-        //test
-        DrawTexture(test_ok.tex, test_ok.x, test_ok.y, WHITE);
+        //draw all elements in the vector
+        for (auto i : specific_parts) {
+
+            DrawTexture(i.tex, i.x, i.y, WHITE);
+
+        }
 
         EndMode2D();
 
