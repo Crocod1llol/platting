@@ -143,6 +143,8 @@ int main(void) {
         }
 
 
+        //THIS TEST PART WILL BE REMOVED WHEN WE ARE DONE MAKING A BASE FOR THE LEVEL
+        //the if statement that basically defines the entire collision of parts
         if (CheckCollisionRecs(guyHitbox, long_thing.hitbox)) {
 
             // we should set the player on ground and also prevent them from going
@@ -172,6 +174,8 @@ int main(void) {
                 }
             }
         }
+        // ^^^^^^
+        //the if statement that basically defines the entire collision of parts
 
 
         // check if player is on ground
@@ -203,6 +207,52 @@ int main(void) {
 
             onGround = true;
         }
+
+
+        //the if statement that basically defines the entire collision of parts
+        for (auto i : specific_parts) {
+
+            if (CheckCollisionRecs(guyHitbox, i.hitbox)) {
+
+                 // we should set the player on ground and also prevent them from going
+                 // into the part
+
+                 // the y axis
+                onGround = true;
+
+                guyPos.y = guyPos.y - 2;
+
+                // the x axis
+
+                if (i.y < (guyPos.y + 50)) {
+
+                    float playerCenterX = guyPos.x + guySizeX / 2;
+                    float partCenterX = i.x + i.sizeX / 2;
+
+                
+                    if (playerCenterX < partCenterX) {
+
+                         // left side
+                         guyPos.x = i.x - guySizeX;
+
+                    } else {
+                          // right side
+                          guyPos.x = i.x + i.sizeX;
+                    }
+                }
+            }
+        }
+        // ^^^^^^
+        //the if statement that basically defines the entire collision of parts
+
+
+
+
+
+
+
+
+
 
         // update velocity on both axis
         guyPos.y = guyPos.y + guyYvel * GetFrameTime();
