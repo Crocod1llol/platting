@@ -34,7 +34,7 @@ bool onGround;
 
 int main(void) {
     // initialization, making the screen maximized by playing around with flags
-    InitWindow(GetScreenWidth(), GetScreenHeight(), "angry birds chinese");
+    InitWindow(GetScreenWidth(), GetScreenHeight(), "platting");
 
     // no exit key
     SetExitKey(KEY_NULL);
@@ -53,7 +53,7 @@ int main(void) {
 
     // pos
     // values are temp
-    guyPos = {/* x pos */(float)GetRenderWidth() / 2, /* y pos */(float)GetRenderHeight() / 2};
+    guyPos = {/* x pos */spawnX, /* y pos */spawnY};
     
     // velocity
     float guyXvel = 0;
@@ -74,8 +74,6 @@ int main(void) {
 
     const int jumpVel = -490;
 
-    // random 
-    Part long_thing = {245, 417, 200, 400, LoadTexture("resources/map_part/long_200x400.png")};
 
     //camera declaration
     Camera2D platcam = {
@@ -143,41 +141,6 @@ int main(void) {
         }
 
 
-        //THIS TEST PART WILL BE REMOVED WHEN WE ARE DONE MAKING A BASE FOR THE LEVEL
-        //the if statement that basically defines the entire collision of parts
-        if (CheckCollisionRecs(guyHitbox, long_thing.hitbox)) {
-
-            // we should set the player on ground and also prevent them from going
-            // into the part
-
-            // the y axis
-            onGround = true;
-
-            guyPos.y = guyPos.y - 2;
-
-            // the x axis
-
-            if (long_thing.y < (guyPos.y + 50)) {
-
-                float playerCenterX = guyPos.x + guySizeX / 2;
-                float partCenterX = long_thing.x + long_thing.sizeX / 2;
-
-                
-                if (playerCenterX < partCenterX) {
-
-                    // left side
-                    guyPos.x = long_thing.x - guySizeX;
-
-                } else {
-                     // right side
-                     guyPos.x = long_thing.x + long_thing.sizeX;
-                }
-            }
-        }
-        // ^^^^^^
-        //the if statement that basically defines the entire collision of parts
-
-
         // check if player is on ground
         //  to stop velocity
         if (onGround) {
@@ -190,7 +153,7 @@ int main(void) {
         }
 
         // if player is out of borders in y, then kill em (sus)
-        if (guyPos.y > GetRenderHeight()) {
+        if (guyPos.y > 1800) {
 
             alive = false;
         }
@@ -200,8 +163,11 @@ int main(void) {
                 
             alive = true;
 
-            guyPos.x = 1000;
-            guyPos.y = 500;
+            guyPos.x = spawnX;
+            guyPos.y = spawnY;
+
+            guyXvel = 0;
+            guyYvel = 0;
 
             platcam.target = guyPos;
 
@@ -209,8 +175,9 @@ int main(void) {
         }
 
 
+        //the starter bridge
         //the if statement that basically defines the entire collision of parts
-        for (auto i : specific_parts) {
+        for (auto i : bridge_idk) {
 
             if (CheckCollisionRecs(guyHitbox, i.hitbox)) {
 
@@ -240,18 +207,10 @@ int main(void) {
                           guyPos.x = i.x + i.sizeX;
                     }
                 }
-            }
+            }  
         }
         // ^^^^^^
         //the if statement that basically defines the entire collision of parts
-
-
-
-
-
-
-
-
 
 
         // update velocity on both axis
@@ -278,7 +237,7 @@ int main(void) {
         }
 
         if (!alive) {
-            DrawText("Press T to respawn!", GetRenderWidth(), GetRenderHeight(), 30, WHITE);
+            DrawText("Press T to respawn!", GetRenderWidth() / 2, GetRenderHeight() + 100, 30, WHITE);
         }
 
         BeginMode2D(platcam);
@@ -287,15 +246,19 @@ int main(void) {
         //any map part, character, signs or any stuff part of the level or smth is going here
         //KEEP THAT IN MIND!!!!!!!!!!!!!!!1
         
+        //the "void" that kills
+        DrawRectangle(guyPos.x - 500, 1800, GetRenderWidth() + 1000, GetRenderHeight() + 200, BLACK);
+        
+        //tutorial text
+        DrawText("Yeah.. you can float, but not when you jumped.", 1385, 160, 20, WHITE);
+        DrawText("Walk in walls to wallclimb!", 2783, 175, 20, WHITE);
 
         if (alive) {
               DrawTexture(guyTex, guyPos.x, guyPos.y, WHITE);
         }
 
-        DrawTexture(long_thing.tex, long_thing.x, long_thing.y, WHITE);
-
-        //draw all elements in the vector
-        for (auto i : specific_parts) {
+        //the starter bridge
+        for (auto i : bridge_idk) {
 
             DrawTexture(i.tex, i.x, i.y, WHITE);
 
