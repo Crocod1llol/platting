@@ -2,6 +2,9 @@
 
 fire name bro 🔥
 
-# disclamer
-this "project" (if you can even call it that) is still not finished, i just decided to make it public cause why not
-its in a WIP phase, so dont expect much, its just some parts and me playing around with vectors and collisions, so yeah
+# compilation
+use the "compile.sh" script, make sure you have gcc and X11 dev kit installed
+for windows, you can just search on the internet "how to link a raylib program in gcc windows" or smth, or link it in visual studio or your prefered way
+
+# notice
+I dont even know if I have the will to make a second level, most probably will, but for now only the first level is out.
