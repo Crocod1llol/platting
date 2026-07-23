@@ -247,7 +247,7 @@ int main(void) {
         //KEEP THAT IN MIND!!!!!!!!!!!!!!!1
         
         //the "void" that kills
-        DrawRectangle(guyPos.x - 500, 1800, GetRenderWidth() + 1000, GetRenderHeight() + 200, BLACK);
+        DrawRectangle(guyPos.x - 1000, 1800, GetRenderWidth() + 2000, GetRenderHeight() + 200, BLACK);
         
         //tutorial text
         DrawText("Yeah.. you can float, but not when you jumped.", 1385, 160, 20, WHITE);
