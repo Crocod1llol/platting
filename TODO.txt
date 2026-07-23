@@ -1,4 +1,4 @@
 1. make basic player controls --OK
 2. make basic collisions, ground and parts of a test level --its good for now, maybe needs rework later
 3. make a somewhat worlking camera -- it will probably get revamped, but for now ill keep it that way
-4. make a level --work in progress
+4. make a level --OK
