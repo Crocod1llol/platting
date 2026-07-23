@@ -22,7 +22,14 @@ extern "C" {
 
 //the variables that can be global
 //idk how to do this tbh
-//im lost
+//im lost/
+
+//the state of the game can be:
+//1 - not started
+//2 - running
+//3 - finished
+int state;
+
 bool alive;
 
 Vector2 guyPos;
@@ -43,6 +50,8 @@ int main(void) {
 
     // max fps
     SetTargetFPS(60);
+
+    state = 1;
 
     // player variables
     //idk why but when i move them into the global scope the whole program freaks out i dont
@@ -88,98 +97,143 @@ int main(void) {
 
     while (!WindowShouldClose()) {
         
-        //update camera if player is alive
-        if (alive) {
+        //check if the game is running 
+        if (state == 2) {
 
-            //x axis
-            if (guyPos.x >= GetRenderWidth() / 2 - 100 + platcam.target.x ) {
-                //to the right
-                platcam.target.x = guyPos.x;
+
+             //update camera if player is alive
+            if (alive) {
+
+                //x axis
+                if (guyPos.x >= GetRenderWidth() / 2 - 100 + platcam.target.x ) {
+                   //to the right
+                   platcam.target.x = guyPos.x;
+                }
+
+                if (guyPos.x <=  platcam.target.x - GetRenderWidth() / 2 + 100 ) {
+                    //to the left
+                    platcam.target.x = guyPos.x;
+                }
+
+                //y axis
+                if (guyPos.y > platcam.target.y) {
+                     //down
+                    platcam.target.y = guyPos.y;
+                }
+
+                if (guyPos.y < platcam.target.y) {
+                    //up
+                    platcam.target.y = guyPos.y;
+                }
             }
 
-            if (guyPos.x <=  platcam.target.x - GetRenderWidth() / 2 + 100 ) {
-                //to the left
-                platcam.target.x = guyPos.x;
+             // player stufffffffffffffffffffff
+
+            // player hitbox
+            Rectangle guyHitbox = {guyPos.x, guyPos.y, guySizeX, guySizeY};
+
+            // update X vel on player input.
+            if (IsKeyDown(KEY_D)) {
+
+                guyXvel = plySpeed;
+
+            } else if (IsKeyDown(KEY_A)) {
+
+                 guyXvel = -plySpeed;
+            } else {
+
+                 guyXvel = 0;
             }
 
-            //y axis
-            if (guyPos.y > platcam.target.y) {
-                //down
-                platcam.target.y = guyPos.y;
-            }
+            // jump if on ground
+            if (onGround && IsKeyPressed(KEY_SPACE)) {
 
-            if (guyPos.y < platcam.target.y) {
-                //up
-                platcam.target.y = guyPos.y;
-            }
-        }
-
-        // player stufffffffffffffffffffff
-
-        // player hitbox
-        Rectangle guyHitbox = {guyPos.x, guyPos.y, guySizeX, guySizeY};
-
-        // update X vel on player input.
-        if (IsKeyDown(KEY_D)) {
-
-            guyXvel = plySpeed;
-
-        } else if (IsKeyDown(KEY_A)) {
-
-            guyXvel = -plySpeed;
-        } else {
-
-            guyXvel = 0;
-        }
-
-        // jump if on ground
-        if (onGround && IsKeyPressed(KEY_SPACE)) {
-
-            onGround = false;
+                onGround = false;
            
-            guyYvel = jumpVel;
-        }
+                guyYvel = jumpVel;
+            }
 
 
-        // check if player is on ground
-        //  to stop velocity
-        if (onGround) {
+             // check if player is on ground
+             //  to stop velocity
+            if (onGround) {
 
-            guyYvel = 0;
-        } else {
-              // if not, then make gravity work idk
+                 guyYvel = 0;
+            } else {
+                // if not, then make gravity work idk
 
-              guyYvel = guyYvel + gravity;
-        }
+                guyYvel = guyYvel + gravity;
+            }
 
-        // if player is out of borders in y, then kill em (sus)
-        if (guyPos.y > 1800) {
+            // if player is out of borders in y, then kill em (sus)
+            if (guyPos.y > 1800) {
 
-            alive = false;
-        }
+                 alive = false;
+            }
 
-        //reset key
-        if (IsKeyPressed(KEY_T)) {
+            //reset key
+            if (IsKeyPressed(KEY_T)) {
+
+                 guyPos.x = spawnX;
+                 guyPos.y = spawnY;
+
+                 alive = true;
+
+                 guyXvel = 0;
+                 guyYvel = 0;
+
+                 platcam.target = guyPos;
+
+                 onGround = true;
+            }
+
+            //the finish1 PART that ends first level when touched
+            if (CheckCollisionRecs(guyHitbox, finish1.hitbox)) {
+
+                 state = 3;
+            }
+
+            //the starter bridge
+            //the if statement that basically defines the entire collision of parts
+            for (auto i : bridge_idk) {
+
+                 if (CheckCollisionRecs(guyHitbox, i.hitbox)) {
+
+                      // we should set the player on ground and also prevent them from going
+                      // into the part
+
+                      // the y axis
+                      onGround = true;
+
+                      guyPos.y = guyPos.y - 2;
+
+                      // the x axis
+
+                      if (i.y < (guyPos.y + 50)) {
+
+                        float playerCenterX = guyPos.x + guySizeX / 2;
+                        float partCenterX = i.x + i.sizeX / 2;
+
                 
-            alive = true;
+                        if (playerCenterX < partCenterX) {
 
-            guyPos.x = spawnX;
-            guyPos.y = spawnY;
+                            // left side
+                            guyPos.x = i.x - guySizeX;
 
-            guyXvel = 0;
-            guyYvel = 0;
+                        } else {
+                               // right side
+                               guyPos.x = i.x + i.sizeX;
+                        }
+                    }
+                }  
+            }
+            // ^^^^^^
+            //the if statement that basically defines the entire collision of parts
+        
+            //the if statement that basically defines the entire collision of parts
+            for (auto i : other) {
 
-            platcam.target = guyPos;
-
-            onGround = true;
-        }
-
-
-        //the starter bridge
-        //the if statement that basically defines the entire collision of parts
-        for (auto i : bridge_idk) {
-
-            if (CheckCollisionRecs(guyHitbox, i.hitbox)) {
+              if (CheckCollisionRecs(guyHitbox, i.hitbox)) {
 
                  // we should set the player on ground and also prevent them from going
                  // into the part
@@ -207,15 +261,43 @@ int main(void) {
                           guyPos.x = i.x + i.sizeX;
                     }
                 }
-            }  
+              }  
+            }
+            // ^^^^^^
+            //the if statement that basically defines the entire collision of parts
+        
+        
+            //yeah, it just kills you when you collide, thats it
+            for (auto i : killparts) {
+
+                 if (CheckCollisionRecs(guyHitbox, i.hitbox)) {
+
+                     //kill player
+                     alive = false;
+                 }   
+            }
+
+            for (auto i : checkpoints) {
+
+                 if (CheckCollisionRecs(guyHitbox, i.hitbox)) {
+
+                     //Set Player spawn point when he touches checkpoint
+                     spawnX = guyPos.x;
+                     spawnY = guyPos.y;
+                 }  
+            }
+
+            // update velocity on both axis
+            guyPos.y = guyPos.y + guyYvel * GetFrameTime();
+            guyPos.x = guyPos.x + guyXvel * GetFrameTime();
+
         }
-        // ^^^^^^
-        //the if statement that basically defines the entire collision of parts
 
-
-        // update velocity on both axis
-        guyPos.y = guyPos.y + guyYvel * GetFrameTime();
-        guyPos.x = guyPos.x + guyXvel * GetFrameTime();
+        if (state == 1 && IsKeyPressed(KEY_SPACE)) {
+            
+            //start the game
+            state = 2;
+        }
 
         BeginDrawing(); 
         //note 2 self
@@ -237,7 +319,16 @@ int main(void) {
         }
 
         if (!alive) {
-            DrawText("Press T to respawn!", GetRenderWidth() / 2, GetRenderHeight() + 100, 30, WHITE);
+            DrawText("Press T to respawn!", GetRenderWidth() / 2, 100, 30, WHITE);
+        }
+
+        if (state == 1) {
+    
+            DrawText("Press Space to start.", GetRenderWidth() / 2, 500, 30, WHITE);
+        }
+
+        if (state == 3) {
+            DrawText("YOU WIN!!!!!!!!!!!!!!!!!!!", GetRenderWidth() / 2, GetRenderHeight() / 2, 30, GOLD);
         }
 
         BeginMode2D(platcam);
@@ -246,22 +337,43 @@ int main(void) {
         //any map part, character, signs or any stuff part of the level or smth is going here
         //KEEP THAT IN MIND!!!!!!!!!!!!!!!1
         
+        DrawText("--->", 3271, -766, 30, WHITE);
+
         //the "void" that kills
         DrawRectangle(guyPos.x - 1000, 1800, GetRenderWidth() + 2000, GetRenderHeight() + 200, BLACK);
         
         //tutorial text
         DrawText("Yeah.. you can float, but not when you jumped.", 1385, 160, 20, WHITE);
         DrawText("Walk in walls to wallclimb!", 2783, 175, 20, WHITE);
+        DrawText("The green part is a checkpoint, when you touch it, you will respawn there.", 2855, -810, 20, WHITE);
 
         if (alive) {
               DrawTexture(guyTex, guyPos.x, guyPos.y, WHITE);
         }
 
+        DrawTexture(finish1.tex, finish1.x, finish1.y, WHITE);
+
         //the starter bridge
         for (auto i : bridge_idk) {
 
             DrawTexture(i.tex, i.x, i.y, WHITE);
+        }
 
+        for (auto i : other) {
+
+            DrawTexture(i.tex, i.x, i.y, WHITE);
+        }
+
+        //i think the vector name is self explanatory
+        for (auto i : killparts) {
+
+            DrawTexture(i.tex, i.x, i.y, WHITE);
+
+        }
+
+        for (auto i : checkpoints) {
+            
+            DrawTexture(i.tex, i.x, i.y, WHITE);
         }
 
         EndMode2D();
